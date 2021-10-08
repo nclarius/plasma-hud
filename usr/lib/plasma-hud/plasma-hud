@@ -186,8 +186,7 @@ def str2bool(v):
 #     Keys are cAsE sensitive
 #     No spaces around the =
 #     [Sections can have spaces and : colons]
-# Also (NOT FIXED):
-#     Can have [Sub][Sections]
+#     Parses [Sub][Sections] as "Sub][Sections", but cannot have comments on the [Section] line
 class KdeConfig(configparser.ConfigParser):
     def __init__(self, filename):
         super().__init__()
@@ -195,6 +194,8 @@ class KdeConfig(configparser.ConfigParser):
         # Keep case sensitive keys
         # http://stackoverflow.com/questions/19359556/configparser-reads-capital-keys-and-make-them-lower-case
         self.optionxform = str
+
+        # Parse SubSections as "Sub][Sections"
 
         self.filename = filename
         self.read(self.filename)
