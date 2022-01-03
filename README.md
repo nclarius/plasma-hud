@@ -31,7 +31,6 @@ menus.
 
 ```
 sudo apt install rofi python3 python3-dbus python3-setproctitle python3-xlib gir1.2-gtk-3.0
-sudo apt install appmenu-qt # Qt4
 sudo apt install appmenu-gtk2-module appmenu-gtk3-module # Gtk2 / Gtk3
 ```
 Or use `unity-gtk2-module unity-gtk3-module` for Gtk2 / Gtk3.
