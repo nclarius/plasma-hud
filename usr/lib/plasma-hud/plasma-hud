@@ -196,6 +196,7 @@ class KdeConfig(configparser.ConfigParser):
         self.optionxform = str
 
         # Parse SubSections as "Sub][Sections"
+        self.SECTCRE = re.compile(r"\[(?P<header>.+?)]\w*$")
 
         self.filename = filename
         self.read(self.filename)
