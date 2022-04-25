@@ -103,7 +103,7 @@ sudo rm /etc/xdg/autostart/plasma-hud.desktop
 
 If you manually create `~/.config/plasmahudrc` you can change any of the following settings.
 
-```
+```ini
 [General]
 Matching=fuzzy
 Sort=true
@@ -135,9 +135,12 @@ ShortcutForeground=#888888
 
 ![](https://i.imgur.com/OrDieG2.png)
 
-You can also set `[Style] RofiTheme=Arc` to select a rofi theme in `/usr/share/rofi/themes/` or `~/.local/share/rofi/themes/`.
+You can also set `[Style] RofiTheme=Arc` to select a rofi theme in:
 
-```
+* `/usr/share/rofi/themes/`
+* `~/.local/share/rofi/themes/`
+
+```ini
 [Style]
 RofiTheme=Arc-Dark
 ```
