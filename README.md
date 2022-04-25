@@ -134,3 +134,12 @@ ShortcutForeground=#888888
 * `[Style] Title=::` will change the `HUD:` prompt text to `:::` which is roughly the width of an icon.
 
 ![](https://i.imgur.com/OrDieG2.png)
+
+You can also set `[Style] RofiTheme=Arc` to select a rofi theme in `/usr/share/rofi/themes/` or `~/.local/share/rofi/themes/`.
+
+```
+[Style]
+RofiTheme=Arc-Dark
+```
+
+![](https://i.imgur.com/IPhlxLe.png)

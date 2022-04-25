@@ -345,6 +345,7 @@ def init_rofi():
     show_shortcuts = str2bool(plasmahudrc.get('Shortcuts', 'Enabled', fallback=str(show_shortcuts)))
     hud_title = plasmahudrc.get('Style', 'Title', fallback='HUD')
     font_name = plasmahudrc.get('Style', 'Font', fallback=font_name)
+    rofi_theme = plasmahudrc.get('Style', 'RofiTheme', fallback=None)
     bg_color = plasmahudrc.get('Colors', 'Background', fallback=bg_color)
     fg_color = plasmahudrc.get('Colors', 'Foreground', fallback=fg_color)
     selected_bg_color = plasmahudrc.get('Colors', 'SelectedBackground', fallback=selected_bg_color)
@@ -416,7 +417,11 @@ def init_rofi():
         '-kb-cancel', 'Escape',
         '-monitor', '-2', # show in the current application
     ]
-    if supports_themestr:
+    if rofi_theme is not None:
+        rofi_cmd += [
+            '-theme', rofi_theme,
+        ]
+    elif supports_themestr:
         # https://github.com/davatorium/rofi/blame/next/doc/default_theme.rasi
         # https://github.com/ubuntu-mate/mate-hud/blame/master/usr/share/rofi/themes/mate-hud.rasi
         # https://github.com/ubuntu-mate/mate-hud/blame/master/usr/lib/mate-hud/mate-hud#L287
