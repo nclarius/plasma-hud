@@ -429,6 +429,7 @@ def init_rofi():
         theme_str = addRule('*', {
             'font': '\"' + font_name + '\"',
             'background': bg_color,
+            'separatorcolor': borders,
             'border-color': borders,
             'foreground': fg_color,
             'lightbg': selected_bg_color,
