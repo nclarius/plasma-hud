@@ -76,7 +76,7 @@ qdbus org.kde.KWin /KWin reconfigure
 
 * If you wish to bind to a normal shortcut key like `Menu` or `Alt+F1` then create a new custom global shortcut in the System Settings.
     * System Settings > Shortcuts > Custom Shortcut
-    * Edit > New > Global Shorcut > D-Bus Command
+    * Edit > New > Global Shortcut > D-Bus Command
     * Trigger > Shortcut: `Menu`
     * Action > Remote application: `com.github.zren.PlasmaHUD`
     * Action > Remote object: `/PlasmaHUD`
@@ -101,7 +101,7 @@ sudo rm /etc/xdg/autostart/plasma-hud.desktop
 
 ## Settings
 
-If you manally create `~/.config/plasmahudrc` you can change any of the following settings.
+If you manually create `~/.config/plasmahudrc` you can change any of the following settings.
 
 ```
 [General]
