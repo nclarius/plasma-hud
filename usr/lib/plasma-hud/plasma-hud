@@ -434,7 +434,7 @@ def init_rofi():
             'foreground': fg_color,
             'lightbg': selected_bg_color,
             'lightfg': selected_fg_color,
-            # Remove Altenate colors
+            # Remove Alternate colors
             'alternate-active-background': 'var(background-color)',
             'alternate-normal-background': 'var(background-color)',
             # Fix swapped selection colors
