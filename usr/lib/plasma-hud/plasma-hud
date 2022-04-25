@@ -35,8 +35,9 @@ DEFAULT_SHORTCUT_FG_COLOR = '#888888'
 
 ### Globals
 # plasmahudrc = None
-supports_icons = False # Requires rofi 1.5.3
+supports_icons = False # Requires rofi 1.5.3 https://github.com/davatorium/rofi/releases/tag/1.5.3
 supports_shortcuts = False # Requires rofi 1.5.5?
+supports_themestr = False # Requires rofi 1.7.0 https://github.com/davatorium/rofi/releases/tag/1.7.0
 rofi_process = None
 show_icons = True
 show_shortcuts = True
@@ -248,7 +249,7 @@ def log_menu(wm_class, menuKeys):
 
 ### Init
 def check_rofi_features():
-    global supports_icons, supports_shortcuts
+    global supports_icons, supports_shortcuts, supports_themestr
 
     # https://stackoverflow.com/questions/11887762/how-do-i-compare-version-numbers-in-python
     try: 
@@ -278,9 +279,11 @@ def check_rofi_features():
             rofiVersion = version_parse(versionStr)
             supports_icons = rofiVersion >= version_parse('1.5.3')
             supports_shortcuts = rofiVersion > version_parse('1.5.4')
+            supports_themestr = rofiVersion >= version_parse('1.7.0')
             logging.debug('rofiVersion: %s', str(rofiVersion))
             logging.debug('supports_icons: %s', str(supports_icons))
             logging.debug('supports_shortcuts: %s', str(supports_shortcuts))
+            logging.debug('supports_themestr: %s', str(supports_themestr))
     except Exception as e:
         logging.warning("Error parsing version (%s) %s", versionStr, e)
 
@@ -387,7 +390,7 @@ def init_rofi():
     dpi = scale * (width_dpi + height_dpi) / 2
 
     logging.debug("init_rofi.rofi_process.pre: %s", rofi_process)
-    rofi_process = subprocess.Popen(['rofi', '-dmenu',
+    rofi_cmd = ['rofi', '-dmenu',
         '-i', # Case insensitive filtering
         '-location', '1',
         '-width', '100',
@@ -412,12 +415,45 @@ def init_rofi():
         '-line-padding', '2',
         '-kb-cancel', 'Escape',
         '-monitor', '-2', # show in the current application
-        '-color-enabled',
-        '-color-window', bg_color +", " + borders + ", " + borders,
-        '-color-normal', bg_color +", " + fg_color + ", " + bg_color + ", " + selected_bg_color + ", " + selected_fg_color,
-        '-color-active', bg_color +", " + fg_color + ", " + bg_color + ", " + info_bg_color + ", " + info_fg_color,
-        '-color-urgent', bg_color +", " + fg_color + ", " + bg_color + ", " + error_bg_color + ", " + error_fg_color,
-        ],
+    ]
+    if supports_themestr:
+        # https://github.com/davatorium/rofi/blame/next/doc/default_theme.rasi
+        # https://github.com/ubuntu-mate/mate-hud/blame/master/usr/share/rofi/themes/mate-hud.rasi
+        # https://github.com/ubuntu-mate/mate-hud/blame/master/usr/lib/mate-hud/mate-hud#L287
+        def addRule(selector, args):
+            rule = selector + '{'
+            for key, value in args.items():
+                rule += key + ':' + value + ';'
+            rule += '}'
+            return rule
+        theme_str = addRule('*', {
+            'font': '\"' + font_name + '\"',
+            'background': bg_color,
+            'border-color': borders,
+            'foreground': fg_color,
+            'lightbg': selected_bg_color,
+            'lightfg': selected_fg_color,
+            # Remove Altenate colors
+            'alternate-active-background': 'var(background-color)',
+            'alternate-normal-background': 'var(background-color)',
+            # Fix swapped selection colors
+            'selected-normal-background': 'var(lightbg)',
+            'selected-normal-foreground': 'var(lightfg)',
+        })
+        logging.debug("theme_str: %s", theme_str)
+        rofi_cmd += [
+            '-theme-str', theme_str,
+        ]
+    else: # rofi 1.6.x and below
+        rofi_cmd += [
+            '-color-enabled',
+            '-color-window', bg_color +", " + borders + ", " + borders,
+            '-color-normal', bg_color +", " + fg_color + ", " + bg_color + ", " + selected_bg_color + ", " + selected_fg_color,
+            '-color-active', bg_color +", " + fg_color + ", " + bg_color + ", " + info_bg_color + ", " + info_fg_color,
+            '-color-urgent', bg_color +", " + fg_color + ", " + bg_color + ", " + error_bg_color + ", " + error_fg_color,
+        ]
+
+    rofi_process = subprocess.Popen(rofi_cmd,
         stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     logging.debug("init_rofi.rofi_process.post: %s", rofi_process)
 
