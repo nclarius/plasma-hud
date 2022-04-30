@@ -137,6 +137,7 @@ ShortcutForeground=#888888
   8 0 4
   7 6 5
   ```
+  and  `9` for under the mouse cursor.
 
 * `[Style] Title=::` will change the `HUD:` prompt text to `:::` which is roughly the width of an icon.
 

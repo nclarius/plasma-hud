@@ -394,7 +394,7 @@ def init_rofi():
     logging.debug("init_rofi.rofi_process.pre: %s", rofi_process)
     rofi_cmd = ['rofi', '-dmenu',
         '-i', # Case insensitive filtering
-        '-location', str(location),
+        '-location', str(location) if location != 9 else '1',
         '-width', '100',
         '-p', hud_title, # Text beside filter textfield
         '-lines', str(num_lines),
@@ -416,7 +416,7 @@ def init_rofi():
         '-matching', matching,
         '-line-padding', '2',
         '-kb-cancel', 'Escape',
-        '-monitor', '-2', # show in the current application
+        '-monitor', '-2' if location != 9 else '-3', # show in the current application, or else under the mouse cursor
     ]
     if rofi_theme is not None:
         rofi_cmd += [
