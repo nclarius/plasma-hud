@@ -339,6 +339,7 @@ def init_rofi():
     matching = plasmahudrc.get('General', 'Matching', fallback='fuzzy')
     sort_items = str2bool(plasmahudrc.get('General', 'Sort', fallback='false'))
     num_lines = int(plasmahudrc.get('General', 'Lines', fallback='10'))
+    location = int(plasmahudrc.get('General', 'Location', fallback='1'))
     wait_for_sync = str2bool(plasmahudrc.get('General', 'WaitForAllMenuItems', fallback='false'))
     show_icons = str2bool(plasmahudrc.get('Icons', 'Enabled', fallback=str(show_icons)))
     icon_theme = plasmahudrc.get('Icons', 'Theme', fallback=icon_theme)
@@ -393,7 +394,7 @@ def init_rofi():
     logging.debug("init_rofi.rofi_process.pre: %s", rofi_process)
     rofi_cmd = ['rofi', '-dmenu',
         '-i', # Case insensitive filtering
-        '-location', '1',
+        '-location', str(location),
         '-width', '100',
         '-p', hud_title, # Text beside filter textfield
         '-lines', str(num_lines),
