@@ -339,6 +339,7 @@ def init_rofi():
     matching = plasmahudrc.get('General', 'Matching', fallback='fuzzy')
     sort_items = str2bool(plasmahudrc.get('General', 'Sort', fallback='false'))
     num_lines = int(plasmahudrc.get('General', 'Lines', fallback='10'))
+    width = int(plasmahudrc.get('General', 'Width', fallback='100'))
     wait_for_sync = str2bool(plasmahudrc.get('General', 'WaitForAllMenuItems', fallback='false'))
     show_icons = str2bool(plasmahudrc.get('Icons', 'Enabled', fallback=str(show_icons)))
     icon_theme = plasmahudrc.get('Icons', 'Theme', fallback=icon_theme)
@@ -361,6 +362,7 @@ def init_rofi():
         logging.debug('matching: %s', str(matching))
         logging.debug('sort_items: %s', str(sort_items))
         logging.debug('num_lines: %s', str(num_lines))
+        logging.debug('width: %s', str(width))
         logging.debug('wait_for_sync: %s', str(wait_for_sync))
         logging.debug('show_icons: %s', str(show_icons))
         logging.debug('icon_theme: %s', str(icon_theme))
@@ -394,9 +396,7 @@ def init_rofi():
     rofi_cmd = ['rofi', '-dmenu',
         '-i', # Case insensitive filtering
         '-location', '1',
-        '-width', '100',
         '-p', hud_title, # Text beside filter textfield
-        '-lines', str(num_lines),
         '-async-pre-read', str(num_lines),
         '-sync' if wait_for_sync else '', # withhold display until menu entries are ready
         '-font', font_name,
@@ -445,7 +445,10 @@ def init_rofi():
             # Fix swapped selection colors
             'selected-normal-background': 'var(lightbg)',
             'selected-normal-foreground': 'var(lightfg)',
+            'lines': str(num_lines),
+            'width': str(width) + "%"
         })
+        print(theme_str)
         logging.debug("theme_str: %s", theme_str)
         rofi_cmd += [
             '-theme-str', theme_str,

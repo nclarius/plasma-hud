@@ -108,6 +108,7 @@ If you manually create `~/.config/plasmahudrc` you can change any of the followi
 Matching=fuzzy
 Sort=true
 Lines=20
+Width=50
 
 [Icons]
 Enabled=true
