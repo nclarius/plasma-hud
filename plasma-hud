@@ -21,15 +21,13 @@ from Xlib import display, protocol, X, Xatom, error
 
 ### Constants
 # https://en.wikipedia.org/wiki/Whitespace_character
-SPACE = ' '
 NOBREAKSPACE = '\u00A0'
 EMSPACE = '\u2003'
 # PATHARROW = '>'
 # PATHARROW = '▶'
-# PATHARROW = '\u00BB'
-PATHARROW = '⟩'
+PATHARROW = '\u00BB'
 # PATHSEPERATOR = NOBREAKSPACE + NOBREAKSPACE + PATHARROW + NOBREAKSPACE + NOBREAKSPACE
-PATHSEPERATOR = SPACE + PATHARROW + SPACE
+PATHSEPERATOR = EMSPACE + PATHARROW + EMSPACE
 
 DEFAULT_SHORTCUT_FG_COLOR = '#9e9e9e'
 
@@ -102,6 +100,7 @@ def format_path(path):
     result = result.replace('Root' + PATHSEPERATOR, '')
     result = result.replace('Label Empty' + PATHSEPERATOR, '')
     result = result.replace('_', '')
+    result = result.replace(PATHSEPERATOR, " ⟩ ")
     # return result.replace(PATHARROW, u'\u0020\u0020\u00BB\u0020\u0020')
     return result
 
@@ -395,10 +394,10 @@ def init_rofi():
     logging.debug("init_rofi.rofi_process.pre: %s", rofi_process)
     rofi_cmd = ['rofi', '-dmenu',
         '-i', # Case insensitive filtering
-        '-location', '1',
+        '-location', '0', # show in center
         '-width', '100',
         '-p', hud_title, # Text beside filter textfield
-        '-lines', str(num_lines),
+        # '-lines', str(num_lines),
         '-async-pre-read', str(num_lines),
         '-sync' if wait_for_sync else '', # withhold display until menu entries are ready
         '-font', font_name,
@@ -447,17 +446,20 @@ def init_rofi():
             # Fix swapped selection colors
             'selected-normal-background': 'var(lightbg)',
             'selected-normal-foreground': 'var(lightfg)',
-        })
-        theme_str += addRule('inputbar', {
-            'children': '[entry]'
+            'width': '450',
+            'lines': '10'
         })
         # theme_str += addRule('entry', {
         #     'placehoder': '\"\"'
         # })
+        theme_str += addRule('inputbar', {
+            'children': '[entry]'
+        })
         logging.debug("theme_str: %s", theme_str)
         rofi_cmd += [
             '-theme-str', theme_str,
         ]
+        print(theme_str)
     else: # rofi 1.6.x and below
         rofi_cmd += [
             '-color-enabled',
