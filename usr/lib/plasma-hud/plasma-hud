@@ -175,6 +175,12 @@ def rgba_to_hex(color):
                                     int(color.green * 255),
                                     int(color.blue  * 255))
 
+def perc_to_hex(value):
+    """
+    Return hexadecial string for percentage value.
+    """
+    return "{0:02x}".format(int(int(value)/100 * 255))
+
 def get_color(style_context, preferred_color, fallback_color):
     color = rgba_to_hex(style_context.lookup_color(preferred_color)[1])
     if color == '#000000':
@@ -233,6 +239,9 @@ class KdeGlobalsConfig(KdeConfig):
     def __init__(self):
         super().__init__(os.path.abspath(os.path.expanduser('~/.config/kdeglobals')))
 
+class KWinConfig(KdeConfig):
+    def __init__(self):
+        super().__init__(os.path.abspath(os.path.expanduser('~/.config/kwinrc')))
 
 
 ### Logging / Tests
@@ -322,10 +331,19 @@ def init_rofi():
     except configparser.Error as e:
         logging.exception('Could not read Icon Theme from ~/.config/kdeglobals')
         icon_theme = 'breeze'
+    try:
+        kwin = KWinConfig()
+        opacity = kwin.get('Effect-kwin4_effect_translucency', 'Menus')
+        opacity_enabled = kwin.get('Plugins', 'kwin4_effect_translucencyEnabled')
+        opacity = opacity if opacity_enabled == 'true' else "100"
+    except configparser.Error as e:
+        logging.exception('Could not read menu opacity from ~/.config/breezerc')
+        opacity = '50'
 
     def logTheme():
         logging.debug('bg_color: %s', str(bg_color))
         logging.debug('fg_color: %s', str(fg_color))
+        logging.debug('opacity: %s', str(opacity))
         logging.debug('borders: %s', str(borders))
         logging.debug('selected_bg_color: %s', str(selected_bg_color))
         logging.debug('selected_fg_color: %s', str(selected_fg_color))
@@ -352,6 +370,7 @@ def init_rofi():
     rofi_theme = plasmahudrc.get('Style', 'RofiTheme', fallback=None)
     bg_color = plasmahudrc.get('Colors', 'Background', fallback=bg_color)
     fg_color = plasmahudrc.get('Colors', 'Foreground', fallback=fg_color)
+    opacity = plasmahudrc.get('Colors', 'Opacity', fallback=opacity)
     selected_bg_color = plasmahudrc.get('Colors', 'SelectedBackground', fallback=selected_bg_color)
     selected_fg_color = plasmahudrc.get('Colors', 'SelectedForeground', fallback=selected_fg_color)
     error_bg_color = plasmahudrc.get('Colors', 'ErrorBackground', fallback=error_bg_color)
@@ -437,6 +456,7 @@ def init_rofi():
         theme_str = addRule('*', {
             'font': '\"' + font_name + '\"',
             'background': bg_color,
+            # 'background': bg_color + perc_to_hex(opacity),
             'separatorcolor': borders,
             'border-color': borders,
             'foreground': fg_color,
@@ -449,14 +469,16 @@ def init_rofi():
             'selected-normal-background': 'var(lightbg)',
             'selected-normal-foreground': 'var(lightfg)',
             'lines': str(num_lines),
-            'width': str(width) + "%"
+            # 'width': str(width) + "%"
+            'width': '500'
         })
+        print(bg_color + perc_to_hex(opacity))
+        # theme_str += addRule('entry', {
+        #     'placeholder': '\"\"',
+        # })
         theme_str += addRule('inputbar', {
             'children': '[entry]'
         })
-        # theme_str += addRule('entry', {
-        #     'placehoder': '\"\"'
-        # })
         logging.debug("theme_str: %s", theme_str)
         rofi_cmd += [
             '-theme-str', theme_str,
@@ -464,8 +486,8 @@ def init_rofi():
     else: # rofi 1.6.x and below
         rofi_cmd += [
             '-color-enabled',
-            '-color-window', bg_color +", " + borders + ", " + borders,
-            '-color-normal', bg_color +", " + fg_color + ", " + bg_color + ", " + selected_bg_color + ", " + selected_fg_color,
+            '-color-window', bg_color + ", " + borders + ", " + borders,
+            '-color-normal', bg_color + ", " + fg_color + ", " + bg_color + ", " + selected_bg_color + ", " + selected_fg_color,
             '-color-active', bg_color +", " + fg_color + ", " + bg_color + ", " + info_bg_color + ", " + info_fg_color,
             '-color-urgent', bg_color +", " + fg_color + ", " + bg_color + ", " + error_bg_color + ", " + error_fg_color,
         ]
